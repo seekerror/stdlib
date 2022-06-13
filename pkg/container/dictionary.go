@@ -2,43 +2,21 @@ package container
 
 import (
 	"fmt"
+	"github.com/seekerror/stdlib/pkg/lang"
 	"golang.org/x/exp/constraints"
 )
-
-/*
-// Direction is a traversal direction.
-type Direction int
-
-const (
-	Ascending Direction = iota
-	Descending
-)
-
-// SearchTree is an associative mapping with an ordered domain.
-type SearchTree[K, V any] interface {
-	Dictionary[K, V]
-
-	// Min returns the smallest key, if not empty.
-	Min() (K, bool)
-	// Max returns the largest key, if not empty.
-	Max() (K, bool)
-
-	// Traverse returns an iterator over all elements in key-order.
-	Traverse(direction Direction) Iterator[KV[K, V]]
-}
-*/
 
 // Dictionary is an associative mapping, typically implemented as a hashtable or binary search tree.
 type Dictionary[K, V any] interface {
 	// List returns an iterator over all elements in an implementation-defined order.
-	List() Iterator[KV[K, V]]
+	List() lang.Iterator[KV[K, V]]
 
 	// Find returns the value associated with the key, if present.
 	Find(k K) (V, bool)
-	// Insert sets the value of the key.
+	// Insert sets the value of the key. Returns prior value, if present.
 	Insert(k K, v V) (V, bool)
-	// Remove removes the key. Returns true iff an element was removed.
-	Remove(k K) bool
+	// Remove removes the key. Returns removed value, if present.
+	Remove(k K) (V, bool)
 }
 
 // KV is a key-value pair.
