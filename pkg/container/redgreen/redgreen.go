@@ -389,7 +389,7 @@ func (t *SearchTree[K, V]) successor(x *node[K, V]) *node[K, V] {
 }
 
 func (t *SearchTree[K, V]) String() string {
-	return lang.IteratorToString(t.List())
+	return lang.Sprint(t.List())
 }
 
 type iterator[K, V any] struct {
