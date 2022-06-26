@@ -8,20 +8,6 @@ import (
 	"time"
 )
 
-// ParseFn is a parser of T values.
-type ParseFn[T any] func(str string) (T, error)
-
-// Shim converts a (T, bool) parsing function to a ParseFn.
-func Shim[T any](fn func(str string) (T, bool)) ParseFn[T] {
-	return func(str string) (T, error) {
-		if v, ok := fn(str); ok {
-			return v, nil
-		}
-		var t T
-		return t, fmt.Errorf("failed to parse '%v'", str)
-	}
-}
-
 // ParseList parses a comma-separated list of T values. The representation of T
 // is assumed not to use comma.
 func ParseList[T any](list string, parser ParseFn[T]) ([]T, error) {
