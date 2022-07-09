@@ -40,7 +40,7 @@ func newValue[T any](parser ParseFn[T], val T, p *T) *value[T] {
 }
 
 func (d *value[T]) String() string {
-	if d == nil {
+	if d == nil || d.val == nil {
 		return ""
 	}
 	return fmt.Sprintf("%v", *d.val)
