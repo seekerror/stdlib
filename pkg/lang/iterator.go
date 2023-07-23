@@ -13,20 +13,33 @@ type Iterator[T any] interface {
 
 // Map transforms values of an iterator lazily.
 func Map[T, U any](it Iterator[T], fn func(t T) U) Iterator[U] {
+	return &mapped[T, U]{it: it, fn: func(t T) (U, bool) {
+		return fn(t), true
+	}}
+}
+
+// MapIf transforms selected values of an iterator lazily.
+func MapIf[T, U any](it Iterator[T], fn func(t T) (U, bool)) Iterator[U] {
 	return &mapped[T, U]{it: it, fn: fn}
 }
 
 type mapped[T, U any] struct {
 	it Iterator[T]
-	fn func(t T) U
+	fn func(t T) (U, bool)
 }
 
 func (it *mapped[T, U]) Next() (U, bool) {
-	if t, ok := it.it.Next(); ok {
-		return it.fn(t), true
+	for {
+		if t, ok := it.it.Next(); ok {
+			if o, ok := it.fn(t); ok {
+				return o, true
+
+			}
+		} else {
+			var u U
+			return u, false
+		}
 	}
-	var u U
-	return u, false
 }
 
 // Head limits an iterator to N values lazily.

@@ -52,6 +52,22 @@ func Map[T, U any](ch <-chan T, fn func(t T) U) <-chan U {
 	return out
 }
 
+// MapIf transforms selected values of a chan. Will leak a go routine if input is not closed.
+func MapIf[T, U any](ch <-chan T, fn func(t T) (U, bool)) <-chan U {
+	out := make(chan U, 1)
+	go func() {
+		defer close(out)
+
+		for t := range ch {
+			if o, ok := fn(t); ok {
+				out <- o
+			}
+		}
+	}()
+
+	return out
+}
+
 // Breaker adds a quit chan breaker to a chan.
 func Breaker[T any](in <-chan T, quit <-chan struct{}) <-chan T {
 	out := make(chan T, 1)
